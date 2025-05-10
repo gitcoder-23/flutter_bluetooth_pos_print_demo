@@ -1,9 +1,8 @@
+import 'package:bluetooth_printer/blueprint_screen_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer_library.dart';
 
-import 'blueprint_screen.dart';
-import 'blueprint_screen_new.dart';
-import 'blueprint_screen_old.dart';
+import 'blue_printer_design.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,7 +28,7 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: BluePrintScreenNew(),
+      home: BluePrinterDesign(),
     );
   }
 }
