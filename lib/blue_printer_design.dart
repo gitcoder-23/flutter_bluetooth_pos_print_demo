@@ -156,8 +156,8 @@ class _BluePrinterDesignState extends State<BluePrinterDesign> {
                           ? SingleChildScrollView(
                               scrollDirection: Axis.vertical,
                               child: SizedBox(
-                                height: 500,
-                                width: 500,
+                                height: 300,
+                                width: 200,
                                 child: PDFView(
                                   filePath: selectedFilePath,
                                 ),
@@ -167,8 +167,8 @@ class _BluePrinterDesignState extends State<BluePrinterDesign> {
                               scrollDirection: Axis.vertical,
                               child: Image.file(
                                 File(selectedFilePath!),
-                                width: 400,
-                                height: 400,
+                                height: 300,
+                                width: 200,
                                 fit: BoxFit.contain,
                               ),
                             )
