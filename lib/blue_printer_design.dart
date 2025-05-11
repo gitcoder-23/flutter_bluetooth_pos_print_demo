@@ -33,6 +33,48 @@ class _BluePrinterDesignState extends State<BluePrinterDesign> {
           "rate": 25422.88,
           "tax": "18%",
           "amount": 29999.00
+        },
+        {
+          "name": "VIVO F29 PRO 5G 8GB/256GB G.BLACK #IMEI-866658078758057",
+          "qty": "1piece",
+          "rate": 25322.88,
+          "tax": "18%",
+          "amount": 29099.00
+        },
+        {
+          "name": "VIVO F29 PRO 5G 8GB/256GB G.BLACK #IMEI-866658078758057",
+          "qty": "1piece",
+          "rate": 25322.88,
+          "tax": "18%",
+          "amount": 29099.00
+        },
+        {
+          "name": "VIVO F29 PRO 5G 8GB/256GB G.BLACK #IMEI-866658078758057",
+          "qty": "1piece",
+          "rate": 25322.88,
+          "tax": "18%",
+          "amount": 29099.00
+        },
+        {
+          "name": "VIVO F29 PRO 5G 8GB/256GB G.BLACK #IMEI-866658078758057",
+          "qty": "1piece",
+          "rate": 25322.88,
+          "tax": "18%",
+          "amount": 29099.00
+        },
+        {
+          "name": "VIVO F29 PRO 5G 8GB/256GB G.BLACK #IMEI-866658078758057",
+          "qty": "1piece",
+          "rate": 25322.88,
+          "tax": "18%",
+          "amount": 29099.00
+        },
+        {
+          "name": "VIVO F29 PRO 5G 8GB/256GB G.BLACK #IMEI-866658078758057",
+          "qty": "1piece",
+          "rate": 25322.88,
+          "tax": "18%",
+          "amount": 29099.00
         }
       ],
       "discount": 2300.00,
