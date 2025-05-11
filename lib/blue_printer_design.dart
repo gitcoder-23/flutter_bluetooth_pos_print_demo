@@ -1,9 +1,7 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer.dart';
-import 'package:file_picker/file_picker.dart';
 
 class BluePrinterDesign extends StatefulWidget {
   const BluePrinterDesign({super.key});
@@ -14,9 +12,6 @@ class BluePrinterDesign extends StatefulWidget {
 
 class _BluePrinterDesignState extends State<BluePrinterDesign> {
   ReceiptController? controller;
-  File? selectedFile;
-  String? selectedFilePath;
-  bool isPDF = false;
 
   List<dynamic> posData = [
     {
@@ -62,29 +57,6 @@ class _BluePrinterDesignState extends State<BluePrinterDesign> {
     }
   ];
 
-  pickAndUploadFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: [
-        'jpg',
-        'png',
-        'jpeg',
-        'pdf',
-      ],
-    );
-
-    if (result != null) {
-      final file = File(result.files.single.path!);
-      setState(() {
-        selectedFile = file;
-        selectedFilePath = file.path;
-        isPDF = file.path.toLowerCase().endsWith('.pdf');
-      });
-    } else {
-      log('No file selected');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,38 +65,35 @@ class _BluePrinterDesignState extends State<BluePrinterDesign> {
           title: const Text('Bluetooth Printer'),
           centerTitle: true,
         ),
-        bottomNavigationBar: Container(
+        bottomNavigationBar: Padding(
           padding: const EdgeInsets.all(8.0),
-          margin: const EdgeInsets.only(bottom: 20),
-          child: Container(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.all(15),
-                backgroundColor: Colors.blue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.all(15),
+              backgroundColor: Colors.blue,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
-              onPressed: () async {
-                final address =
-                    await FlutterBluetoothPrinter.selectDevice(context);
-                if (address != null) {
-                  await controller?.print(
-                    address: address.address,
-                    keepConnected: true,
-                    addFeeds: 4,
-                  );
-                } else {
-                  log('Failed Printing!');
-                }
-              },
-              child: Text(
-                'Select Printer & Print',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                ),
+            ),
+            onPressed: () async {
+              final address =
+                  await FlutterBluetoothPrinter.selectDevice(context);
+              if (address != null) {
+                await controller?.print(
+                  address: address.address,
+                  keepConnected: true,
+                  addFeeds: 4,
+                );
+              } else {
+                log('Failed Printing!');
+              }
+            },
+            child: Text(
+              'Select Printer & Print',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
