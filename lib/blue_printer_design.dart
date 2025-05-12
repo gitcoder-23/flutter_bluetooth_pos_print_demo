@@ -141,229 +141,258 @@ class _BluePrinterDesignState extends State<BluePrinterDesign> {
           ),
         ),
         body: Receipt(
-          builder: (context) => Column(
-            children: [
-              // Header Section
-              Text('INVOICE: ${posData[0]["invoice"]}',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-              Text('Date: ${posData[0]["date"]}',
-                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15)),
-              Text('Customer: ${posData[0]["customer"]}',
-                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15)),
-              Text('Sold By: ${posData[0]["sold_by"]}',
-                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15)),
-              SizedBox(height: 5),
+          defaultTextStyle: TextStyle(
+            fontSize: 15,
+            color: Colors.black,
+          ),
+          containerBuilder: (context, child) {
+            return Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.all(10),
+              // decoration: BoxDecoration(
+              //   border: Border.all(color: Colors.black),
+              //   borderRadius: BorderRadius.circular(10),
+              // ),
+              child: child,
+            );
+          },
+          builder: (context) => SingleChildScrollView(
+            child: Column(
+              children: [
+                Image.asset(
+                  'assets/app_logo.jpeg',
+                  width: 140,
+                ),
+                // Header Section
+                Text('INVOICE: ${posData[0]["invoice"]}',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                SizedBox(height: 5),
+                Text('Date: ${posData[0]["date"]}',
+                    style:
+                        TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
+                SizedBox(height: 5),
+                Text('Customer: ${posData[0]["customer"]}',
+                    style:
+                        TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
+                Text('Sold By: ${posData[0]["sold_by"]}',
+                    style:
+                        TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
+                SizedBox(height: 5),
 
-              // Items Table Header
-              Table(
-                border: TableBorder.all(),
-                children: [
-                  TableRow(
-                    decoration: BoxDecoration(color: Colors.grey[200]),
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(2),
-                        child: Text('Item',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(2),
-                        child: Text('Qty',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(2),
-                        child: Text('Rate',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(2),
-                        child: Text('Tax',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(2),
-                        child: Text('Amount',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
-                      ),
-                    ],
-                  ),
-                  // Items Rows
-                  for (var item in posData[0]["items"])
-                    TableRow(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(2),
-                          child: Text(item["name"],
-                              style: TextStyle(fontSize: 15)),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(2),
-                          child:
-                              Text(item["qty"], style: TextStyle(fontSize: 15)),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(2),
-                          child: Text(item["rate"].toString(),
-                              style: TextStyle(fontSize: 15)),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(2),
-                          child:
-                              Text(item["tax"], style: TextStyle(fontSize: 15)),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(2),
-                          child: Text(item["amount"].toString(),
-                              style: TextStyle(fontSize: 15)),
-                        ),
-                      ],
-                    ),
-                ],
-              ),
-
-              SizedBox(height: 3),
-
-              // Summary Section
-              Align(
-                alignment: Alignment.centerRight,
-                child: Table(
-                  columnWidths: {1: FixedColumnWidth(100)},
+                // Items Table Header
+                Table(
+                  defaultColumnWidth: FlexColumnWidth(1),
+                  border: TableBorder.all(),
                   children: [
                     TableRow(
+                      decoration: BoxDecoration(color: Colors.grey[200]),
                       children: [
-                        Text('Discount:',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
-                        Text('${posData[0]["discount"]}',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400, fontSize: 15)),
+                        Padding(
+                          padding: EdgeInsets.all(3),
+                          child: Text('Item',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18)),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(3),
+                          child: Text('Qty',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18)),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(3),
+                          child: Text('Rate',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18)),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(3),
+                          child: Text('Tax',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18)),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(3),
+                          child: Text('Amount',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18)),
+                        ),
                       ],
                     ),
-                    TableRow(
-                      children: [
-                        Text('Shipping:',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
-                        Text('${posData[0]["shipping"]}',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400, fontSize: 15)),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        Text('Total:',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
-                        Text('${posData[0]["total"]}',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400, fontSize: 15)),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        Text('Paid:',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
-                        Text('${posData[0]["paid"]}',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400, fontSize: 15)),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        Text('Due:',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
-                        Text('${posData[0]["due"]}',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400, fontSize: 15)),
-                      ],
-                    ),
+                    // Items Rows
+                    for (var item in posData[0]["items"])
+                      TableRow(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(3),
+                            child: Text(item["name"],
+                                style: TextStyle(fontSize: 15)),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(3),
+                            child: Text(item["qty"],
+                                style: TextStyle(fontSize: 15)),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(3),
+                            child: Text(item["rate"].toString(),
+                                style: TextStyle(fontSize: 15)),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(3),
+                            child: Text(item["tax"],
+                                style: TextStyle(fontSize: 15)),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(3),
+                            child: Text(item["amount"].toString(),
+                                style: TextStyle(fontSize: 15)),
+                          ),
+                        ],
+                      ),
                   ],
                 ),
-              ),
 
-              SizedBox(height: 2),
+                SizedBox(height: 3),
 
-              // Payments Section
-              Text('Payments:',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-              SizedBox(height: 4),
-
-              Table(
-                border: TableBorder.all(),
-                children: [
-                  TableRow(
-                    decoration: BoxDecoration(color: Colors.grey[200]),
+                // Summary Section
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Table(
+                    columnWidths: {1: FixedColumnWidth(100)},
                     children: [
-                      Padding(
-                        padding: EdgeInsets.all(2),
-                        child: Text('Txn No',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
+                      TableRow(
+                        children: [
+                          Text('Discount:',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15)),
+                          Text('${posData[0]["discount"]}',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w400, fontSize: 15)),
+                        ],
                       ),
-                      Padding(
-                        padding: EdgeInsets.all(2),
-                        child: Text('Mode',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
+                      TableRow(
+                        children: [
+                          Text('Shipping:',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15)),
+                          Text('${posData[0]["shipping"]}',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w400, fontSize: 15)),
+                        ],
                       ),
-                      Padding(
-                        padding: EdgeInsets.all(2),
-                        child: Text('Date',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
+                      TableRow(
+                        children: [
+                          Text('Total:',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15)),
+                          Text('${posData[0]["total"]}',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w400, fontSize: 15)),
+                        ],
                       ),
-                      Padding(
-                        padding: EdgeInsets.all(2),
-                        child: Text('Amount',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
+                      TableRow(
+                        children: [
+                          Text('Paid:',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15)),
+                          Text('${posData[0]["paid"]}',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w400, fontSize: 15)),
+                        ],
+                      ),
+                      TableRow(
+                        children: [
+                          Text('Due:',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15)),
+                          Text('${posData[0]["due"]}',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w400, fontSize: 15)),
+                        ],
                       ),
                     ],
                   ),
-                  for (var payment in posData[0]["payments"])
+                ),
+
+                SizedBox(height: 2),
+
+                // Payments Section
+                Text('Payments:',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                SizedBox(height: 4),
+
+                Table(
+                  border: TableBorder.all(),
+                  children: [
                     TableRow(
+                      decoration: BoxDecoration(color: Colors.grey[200]),
                       children: [
                         Padding(
                           padding: EdgeInsets.all(2),
-                          child: Text(
-                            payment["txn_no"],
-                            style: TextStyle(fontSize: 15),
-                          ),
+                          child: Text('Txn No',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15)),
                         ),
                         Padding(
                           padding: EdgeInsets.all(2),
-                          child: Text(
-                            payment["mode"],
-                            style: TextStyle(fontSize: 15),
-                          ),
+                          child: Text('Mode',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15)),
                         ),
                         Padding(
                           padding: EdgeInsets.all(2),
-                          child: Text(
-                            payment["date"],
-                            style: TextStyle(fontSize: 15),
-                          ),
+                          child: Text('Date',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15)),
                         ),
                         Padding(
                           padding: EdgeInsets.all(2),
-                          child: Text(
-                            payment["amount"].toString(),
-                            style: TextStyle(fontSize: 15),
-                          ),
+                          child: Text('Amount',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15)),
                         ),
                       ],
                     ),
-                ],
-              ),
-            ],
+                    for (var payment in posData[0]["payments"])
+                      TableRow(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(2),
+                            child: Text(
+                              payment["txn_no"],
+                              style: TextStyle(fontSize: 15),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(2),
+                            child: Text(
+                              payment["mode"],
+                              style: TextStyle(fontSize: 15),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(2),
+                            child: Text(
+                              payment["date"],
+                              style: TextStyle(fontSize: 15),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(2),
+                            child: Text(
+                              payment["amount"].toString(),
+                              style: TextStyle(fontSize: 15),
+                            ),
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
+              ],
+            ),
           ),
           onInitialized: (controller) {
             this.controller = controller;
