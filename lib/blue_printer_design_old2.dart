@@ -3,14 +3,14 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer.dart';
 
-class BluePrinterDesign extends StatefulWidget {
-  const BluePrinterDesign({super.key});
+class BluePrinterDesignOld2 extends StatefulWidget {
+  const BluePrinterDesignOld2({super.key});
 
   @override
-  State<BluePrinterDesign> createState() => _BluePrinterDesignState();
+  State<BluePrinterDesignOld2> createState() => _BluePrinterDesignOld2State();
 }
 
-class _BluePrinterDesignState extends State<BluePrinterDesign> {
+class _BluePrinterDesignOld2State extends State<BluePrinterDesignOld2> {
   ReceiptController? controller;
 
   List<dynamic> posData = [
@@ -151,6 +151,10 @@ class _BluePrinterDesignState extends State<BluePrinterDesign> {
                 width: double.infinity,
                 alignment: Alignment.center,
                 padding: EdgeInsets.all(10),
+                // decoration: BoxDecoration(
+                //   border: Border.all(color: Colors.black),
+                //   borderRadius: BorderRadius.circular(10),
+                // ),
                 child: child,
               ),
             );
