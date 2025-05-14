@@ -1,7 +1,206 @@
-import 'dart:developer';
+// import 'dart:developer';
+// import 'dart:typed_data';
 
+// import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
+// import 'package:flutter/material.dart';
+// import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
+// import 'package:flutter/services.dart' show rootBundle;
+// import 'package:image/image.dart' as img;
+
+// class BluePrinterDesign extends StatefulWidget {
+//   const BluePrinterDesign({super.key});
+
+//   @override
+//   State<BluePrinterDesign> createState() => _BluePrinterDesignState();
+// }
+
+// class _BluePrinterDesignState extends State<BluePrinterDesign> {
+//   List<dynamic> pairedDevices = [];
+
+//   List<dynamic> posData = [
+//     {
+//       "invoice": "SALE-348",
+//       "date": "07-05-2025",
+//       "customer": "ANISHA KHATUN",
+//       "sold_by": "@SOUJANYA_360DEGREE",
+//       "items": [
+//         {
+//           "name": "COFFEE MUG #1213",
+//           "qty": "1piece",
+//           "rate": 1.00,
+//           "tax": "0%",
+//           "amount": 1.00
+//         },
+//         {
+//           "name": "OPPO F29 PRO 5G 8GB/256GB G.BLACK #IMEI-866658078758057",
+//           "qty": "1piece",
+//           "rate": 25422.88,
+//           "tax": "18%",
+//           "amount": 29999.00
+//         },
+//       ],
+//       "discount": 2300.00,
+//       "shipping": 0.00,
+//       "total": 27700.00,
+//       "paid": 27700.00,
+//       "due": 0.00,
+//       "payments": [
+//         {
+//           "txn_no": "PAY-IN-279",
+//           "mode": "UPI",
+//           "date": "07-05-2025",
+//           "amount": 1700.00
+//         },
+//         {
+//           "txn_no": "PAY-IN-278",
+//           "mode": "Cash",
+//           "date": "07-05-2025",
+//           "amount": 26000.00
+//         }
+//       ]
+//     }
+//   ];
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     getBluetoothDevices();
+//   }
+
+//   Future<void> getBluetoothDevices() async {
+//     final paired = await PrintBluetoothThermal.pairedBluetooths;
+//     setState(() {
+//       pairedDevices = paired;
+//     });
+//   }
+
+//   Future<void> startPrinting(String mac) async {
+//     bool isConnected =
+//         await PrintBluetoothThermal.connect(macPrinterAddress: mac);
+//     log("Connected: $isConnected");
+
+//     if (!isConnected) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text('Failed to connect to printer')),
+//       );
+//       return;
+//     }
+
+//     CapabilityProfile profile = await CapabilityProfile.load();
+//     final Generator generator = Generator(PaperSize.mm80, profile);
+//     List<int> bytes = [];
+
+//     // Optional Logo (if needed)
+//     try {
+//       final ByteData data = await rootBundle.load("assets/app_logo.jpeg");
+//       final Uint8List imgBytes = data.buffer.asUint8List();
+//       final img.Image? image = img.decodeImage(imgBytes);
+//       if (image != null) {
+//         bytes += generator.image(image);
+//         bytes += generator.feed(1);
+//       }
+//     } catch (e) {
+//       log("Image load failed: $e");
+//     }
+
+//     bytes += generator.text('INVOICE: ${posData[0]["invoice"]}',
+//         styles: PosStyles(
+//             align: PosAlign.left, bold: true, height: PosTextSize.size2));
+//     bytes += generator.text('Date: ${posData[0]["date"]}');
+//     bytes += generator.text('Customer: ${posData[0]["customer"]}');
+//     bytes += generator.text('Sold By: ${posData[0]["sold_by"]}');
+//     bytes += generator.feed(1);
+
+//     // Items Header
+//     bytes += generator.row([
+//       PosColumn(text: 'Item', width: 6, styles: PosStyles(bold: true)),
+//       PosColumn(text: 'Qty', width: 2, styles: PosStyles(bold: true)),
+//       PosColumn(text: 'Rate', width: 2, styles: PosStyles(bold: true)),
+//       PosColumn(text: 'Amt', width: 2, styles: PosStyles(bold: true)),
+//     ]);
+
+//     bytes += generator.hr();
+
+//     for (var item in posData[0]["items"]) {
+//       bytes += generator.row([
+//         PosColumn(text: item["name"], width: 6),
+//         PosColumn(text: item["qty"], width: 2),
+//         PosColumn(text: item["rate"].toStringAsFixed(0), width: 2),
+//         PosColumn(text: item["amount"].toStringAsFixed(0), width: 2),
+//       ]);
+//     }
+
+//     bytes += generator.hr();
+
+//     // Summary
+//     bytes += generator.text("Discount: ${posData[0]["discount"]}");
+//     bytes += generator.text("Shipping: ${posData[0]["shipping"]}");
+//     bytes += generator.text("Total: ${posData[0]["total"]}",
+//         styles: PosStyles(bold: true));
+//     bytes += generator.text("Paid: ${posData[0]["paid"]}");
+//     bytes += generator.text("Due: ${posData[0]["due"]}");
+//     bytes += generator.feed(1);
+
+//     // Payments
+//     bytes += generator.text("Payments:", styles: PosStyles(bold: true));
+//     for (var payment in posData[0]["payments"]) {
+//       bytes += generator.text(
+//           '${payment["txn_no"]} | ${payment["mode"]} | ${payment["date"]} | ₹${payment["amount"]}');
+//     }
+
+//     bytes += generator.feed(3);
+//     bytes += generator.cut();
+
+//     final result = await PrintBluetoothThermal.writeBytes(bytes);
+//     log("Print result: $result");
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Bluetooth POS Printer'),
+//         backgroundColor: Colors.redAccent,
+//         centerTitle: true,
+//       ),
+//       body: Column(
+//         children: [
+//           const Padding(
+//             padding: EdgeInsets.all(8.0),
+//             child: Text("Paired Devices"),
+//           ),
+//           Expanded(
+//             child: ListView.builder(
+//               itemCount: pairedDevices.length,
+//               itemBuilder: (context, index) {
+//                 final device = pairedDevices[index];
+//                 return ListTile(
+//                   title: Text(device["name"]),
+//                   subtitle: Text(device["macAddress"]),
+//                   trailing: ElevatedButton(
+//                     child: const Text("Print"),
+//                     onPressed: () async {
+//                       await startPrinting(device["macAddress"]);
+//                     },
+//                   ),
+//                 );
+//               },
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+import 'dart:developer';
+import 'dart:typed_data';
+
+import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer.dart';
+import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:image/image.dart' as img;
 
 class BluePrinterDesign extends StatefulWidget {
   const BluePrinterDesign({super.key});
@@ -11,8 +210,7 @@ class BluePrinterDesign extends StatefulWidget {
 }
 
 class _BluePrinterDesignState extends State<BluePrinterDesign> {
-  ReceiptController? controller;
-
+  List<dynamic> pairedDevices = [];
   List<dynamic> posData = [
     {
       "invoice": "SALE-348",
@@ -41,41 +239,6 @@ class _BluePrinterDesignState extends State<BluePrinterDesign> {
           "tax": "18%",
           "amount": 29099.00
         },
-        {
-          "name": "VIVO F29 PRO 5G 8GB/256GB G.BLACK #IMEI-866658078758057",
-          "qty": "1piece",
-          "rate": 25322.88,
-          "tax": "18%",
-          "amount": 29099.00
-        },
-        {
-          "name": "VIVO F29 PRO 5G 8GB/256GB G.BLACK #IMEI-866658078758057",
-          "qty": "1piece",
-          "rate": 25322.88,
-          "tax": "18%",
-          "amount": 29099.00
-        },
-        {
-          "name": "VIVO F29 PRO 5G 8GB/256GB G.BLACK #IMEI-866658078758057",
-          "qty": "1piece",
-          "rate": 25322.88,
-          "tax": "18%",
-          "amount": 29099.00
-        },
-        {
-          "name": "VIVO F29 PRO 5G 8GB/256GB G.BLACK #IMEI-866658078758057",
-          "qty": "1piece",
-          "rate": 25322.88,
-          "tax": "18%",
-          "amount": 29099.00
-        },
-        {
-          "name": "VIVO F29 PRO 5G 8GB/256GB G.BLACK #IMEI-866658078758057",
-          "qty": "1piece",
-          "rate": 25322.88,
-          "tax": "18%",
-          "amount": 29099.00
-        }
       ],
       "discount": 2300.00,
       "shipping": 0.00,
@@ -100,295 +263,187 @@ class _BluePrinterDesignState extends State<BluePrinterDesign> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    getBluetoothDevices();
+  }
+
+  Future<void> getBluetoothDevices() async {
+    final paired = await PrintBluetoothThermal.pairedBluetooths;
+    setState(() {
+      pairedDevices = paired;
+    });
+  }
+
+  Future<void> startPrinting(String mac) async {
+    bool isConnected =
+        await PrintBluetoothThermal.connect(macPrinterAddress: mac);
+    log("Connected: $isConnected");
+
+    if (!isConnected) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to connect to printer')),
+      );
+      return;
+    }
+
+    CapabilityProfile profile = await CapabilityProfile.load();
+    final Generator generator = Generator(PaperSize.mm80, profile);
+    List<int> bytes = [];
+
+    // Optional Logo (if needed)
+    try {
+      final ByteData data = await rootBundle.load("assets/app_logo.jpeg");
+      final Uint8List imgBytes = data.buffer.asUint8List();
+      final img.Image? image = img.decodeImage(imgBytes);
+      if (image != null) {
+        bytes += generator.image(image);
+        bytes += generator.feed(1);
+      }
+    } catch (e) {
+      log("Image load failed: $e");
+    }
+
+    bytes += generator.text('INVOICE: ${posData[0]["invoice"]}',
+        styles: PosStyles(
+            align: PosAlign.left, bold: true, height: PosTextSize.size2));
+    bytes += generator.text('Date: ${posData[0]["date"]}');
+    bytes += generator.text('Customer: ${posData[0]["customer"]}');
+    bytes += generator.text('Sold By: ${posData[0]["sold_by"]}');
+    bytes += generator.feed(1);
+
+    // Items Header
+    bytes += generator.row([
+      PosColumn(text: 'Item', width: 6, styles: PosStyles(bold: true)),
+      PosColumn(text: 'Qty', width: 2, styles: PosStyles(bold: true)),
+      PosColumn(text: 'Rate', width: 2, styles: PosStyles(bold: true)),
+      PosColumn(text: 'Amt', width: 2, styles: PosStyles(bold: true)),
+    ]);
+
+    bytes += generator.hr();
+
+    for (var item in posData[0]["items"]) {
+      bytes += generator.row([
+        PosColumn(text: item["name"], width: 6),
+        PosColumn(text: item["qty"], width: 2),
+        PosColumn(text: item["rate"].toStringAsFixed(0), width: 2),
+        PosColumn(text: item["amount"].toStringAsFixed(0), width: 2),
+      ]);
+    }
+
+    bytes += generator.hr();
+
+    // Summary
+    bytes += generator.text("Discount: ${posData[0]["discount"]}");
+    bytes += generator.text("Shipping: ${posData[0]["shipping"]}");
+    bytes += generator.text("Total: ${posData[0]["total"]}",
+        styles: PosStyles(bold: true));
+    bytes += generator.text("Paid: ${posData[0]["paid"]}");
+    bytes += generator.text("Due: ${posData[0]["due"]}");
+    bytes += generator.feed(1);
+
+    // Payments
+    bytes += generator.text("Payments:", styles: PosStyles(bold: true));
+    for (var payment in posData[0]["payments"]) {
+      bytes += generator.text(
+          '${payment["txn_no"]} | ${payment["mode"]} | ${payment["date"]} | ₹${payment["amount"]}');
+    }
+
+    bytes += generator.feed(3);
+    bytes += generator.cut();
+
+    final result = await PrintBluetoothThermal.writeBytes(bytes);
+    log("Print result: $result");
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.redAccent,
-          title: const Text('Bluetooth Printer'),
-          centerTitle: true,
-        ),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.all(15),
-              backgroundColor: Colors.blue,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            onPressed: () async {
-              final address =
-                  await FlutterBluetoothPrinter.selectDevice(context);
-              if (address != null) {
-                await controller?.print(
-                  address: address.address,
-                  keepConnected: true,
-                  addFeeds: 4,
-                );
-              } else {
-                log('Failed Printing!');
-              }
-            },
+      appBar: AppBar(
+        title: const Text('Bluetooth POS Printer'),
+        backgroundColor: Colors.redAccent,
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          // Invoice Data Display as Image Example
+          const Padding(
+            padding: EdgeInsets.all(8.0),
             child: Text(
-              'Select Printer & Print',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-              ),
+              'Sale Invoice - Sample Data',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
-        ),
-        body: Receipt(
-          defaultTextStyle: TextStyle(
-            fontSize: 15,
-            color: Colors.black,
-          ),
-          containerBuilder: (context, child) {
-            return SingleChildScrollView(
-              child: Container(
-                width: double.infinity,
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(10),
-                child: child,
-              ),
-            );
-          },
-          builder: (context) => Column(
-            children: [
-              Image.asset(
-                'assets/app_logo.jpeg',
-                width: 140,
-              ),
-              // Header Section
-              Text('INVOICE: ${posData[0]["invoice"]}',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-              SizedBox(height: 5),
-              Text('Date: ${posData[0]["date"]}',
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
-              SizedBox(height: 5),
-              Text('Customer: ${posData[0]["customer"]}',
-                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
-              Text('Sold By: ${posData[0]["sold_by"]}',
-                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
-              SizedBox(height: 5),
-
-              // Items Table Header
-              Table(
-                defaultColumnWidth: FlexColumnWidth(1),
-                border: TableBorder.all(),
-                children: [
-                  TableRow(
-                    decoration: BoxDecoration(color: Colors.grey[200]),
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(3),
-                        child: Text('Item',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(3),
-                        child: Text('Qty',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(3),
-                        child: Text('Rate',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(3),
-                        child: Text('Tax',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(3),
-                        child: Text('Amount',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18)),
-                      ),
-                    ],
+          Expanded(
+            child: ListView.builder(
+              itemCount: posData[0]["items"].length,
+              itemBuilder: (context, index) {
+                final item = posData[0]["items"][index];
+                return ListTile(
+                  title: Text(item["name"]),
+                  subtitle: Text(
+                    'Qty: ${item["qty"]} | Rate: ${item["rate"]} | Tax: ${item["tax"]} | Amount: ${item["amount"]}',
+                    style: TextStyle(fontSize: 14),
                   ),
-                  // Items Rows
-                  for (var item in posData[0]["items"])
-                    TableRow(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(3),
-                          child: Text(item["name"],
-                              style: TextStyle(fontSize: 15)),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(3),
-                          child:
-                              Text(item["qty"], style: TextStyle(fontSize: 15)),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(3),
-                          child: Text(item["rate"].toString(),
-                              style: TextStyle(fontSize: 15)),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(3),
-                          child:
-                              Text(item["tax"], style: TextStyle(fontSize: 15)),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(3),
-                          child: Text(item["amount"].toString(),
-                              style: TextStyle(fontSize: 15)),
-                        ),
-                      ],
-                    ),
-                ],
-              ),
-
-              SizedBox(height: 3),
-
-              // Summary Section
-              Align(
-                alignment: Alignment.centerRight,
-                child: Table(
-                  columnWidths: {1: FixedColumnWidth(100)},
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.all(15),
+            backgroundColor: Colors.blue,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          onPressed: () async {
+            await showModalBottomSheet(
+              context: context,
+              builder: (context) {
+                return Column(
                   children: [
-                    TableRow(
-                      children: [
-                        Text('Discount:',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
-                        Text('${posData[0]["discount"]}',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400, fontSize: 15)),
-                      ],
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text("Select Bluetooth Printer"),
                     ),
-                    TableRow(
-                      children: [
-                        Text('Shipping:',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
-                        Text('${posData[0]["shipping"]}',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400, fontSize: 15)),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        Text('Total:',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
-                        Text('${posData[0]["total"]}',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400, fontSize: 15)),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        Text('Paid:',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
-                        Text('${posData[0]["paid"]}',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400, fontSize: 15)),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        Text('Due:',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
-                        Text('${posData[0]["due"]}',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400, fontSize: 15)),
-                      ],
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: pairedDevices.length,
+                        itemBuilder: (context, index) {
+                          final device = pairedDevices[index];
+                          return ListTile(
+                            title: Text(device["name"]),
+                            subtitle: Text(device["macAddress"]),
+                            trailing: ElevatedButton(
+                              child: const Text("Select & Print"),
+                              onPressed: () async {
+                                await startPrinting(device["macAddress"]);
+                              },
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ],
-                ),
-              ),
-
-              SizedBox(height: 2),
-
-              // Payments Section
-              Text('Payments:',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-              SizedBox(height: 4),
-
-              Table(
-                border: TableBorder.all(),
-                children: [
-                  TableRow(
-                    decoration: BoxDecoration(color: Colors.grey[200]),
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(2),
-                        child: Text('Txn No',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(2),
-                        child: Text('Mode',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(2),
-                        child: Text('Date',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(2),
-                        child: Text('Amount',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
-                      ),
-                    ],
-                  ),
-                  for (var payment in posData[0]["payments"])
-                    TableRow(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(2),
-                          child: Text(
-                            payment["txn_no"],
-                            style: TextStyle(fontSize: 15),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(2),
-                          child: Text(
-                            payment["mode"],
-                            style: TextStyle(fontSize: 15),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(2),
-                          child: Text(
-                            payment["date"],
-                            style: TextStyle(fontSize: 15),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(2),
-                          child: Text(
-                            payment["amount"].toString(),
-                            style: TextStyle(fontSize: 15),
-                          ),
-                        ),
-                      ],
-                    ),
-                ],
-              ),
-            ],
-          ),
-          onInitialized: (controller) {
-            this.controller = controller;
+                );
+              },
+            );
           },
-        ));
+          child: Text(
+            'Select Printer & Print',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

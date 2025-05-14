@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer_library.dart';
 
 import 'blue_printer_design.dart';
+import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
+
+import 'blue_printer_design_backup.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(const MyApp());
 }
 
@@ -28,7 +33,7 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: BluePrinterDesign(),
+      home: BluePrinterDesignBackup(),
     );
   }
 }
