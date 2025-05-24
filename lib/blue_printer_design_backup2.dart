@@ -173,6 +173,7 @@ class _BluePrinterDesignBackup2State extends State<BluePrinterDesignBackup2> {
 
   Widget buildContent() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Image.asset(
           'assets/app_logo.jpeg',
