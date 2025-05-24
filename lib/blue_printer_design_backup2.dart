@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer.dart';
 
+import 'const/mock_data.dart';
+
 class BluePrinterDesignBackup2 extends StatefulWidget {
   const BluePrinterDesignBackup2({super.key});
 
@@ -13,100 +15,92 @@ class BluePrinterDesignBackup2 extends StatefulWidget {
 
 class _BluePrinterDesignBackup2State extends State<BluePrinterDesignBackup2> {
   ReceiptController? controller;
+  BluetoothDevice? _connectedDevice;
+  bool _isConnecting = false;
+  bool _isPrinting = false;
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
-  List<dynamic> posData = [
-    {
-      "invoice": "SALE-348",
-      "date": "07-05-2025",
-      "customer": "ANISHA KHATUN",
-      "sold_by": "@SOUJANYA_360DEGREE",
-      "items": [
-        {
-          "name": "COFFEE MUG #1213",
-          "qty": "1piece",
-          "rate": 1.00,
-          "tax": "0%",
-          "amount": 1.00
-        },
-        {
-          "name": "OPPO F29 PRO 5G 8GB/256GB G.BLACK #IMEI-866658078758057",
-          "qty": "1piece",
-          "rate": 25422.88,
-          "tax": "18%",
-          "amount": 29999.00
-        },
-        {
-          "name": "VIVO F29 PRO 5G 8GB/256GB G.BLACK #IMEI-866658078758057",
-          "qty": "1piece",
-          "rate": 25322.88,
-          "tax": "18%",
-          "amount": 29099.00
-        },
-        {
-          "name": "VIVO F29 PRO 5G 8GB/256GB G.BLACK #IMEI-866658078758057",
-          "qty": "1piece",
-          "rate": 25322.88,
-          "tax": "18%",
-          "amount": 29099.00
-        },
-        {
-          "name": "VIVO F29 PRO 5G 8GB/256GB G.BLACK #IMEI-866658078758057",
-          "qty": "1piece",
-          "rate": 25322.88,
-          "tax": "18%",
-          "amount": 29099.00
-        },
-        {
-          "name": "VIVO F29 PRO 5G 8GB/256GB G.BLACK #IMEI-866658078758057",
-          "qty": "1piece",
-          "rate": 25322.88,
-          "tax": "18%",
-          "amount": 29099.00
-        },
-        {
-          "name": "VIVO F29 PRO 5G 8GB/256GB G.BLACK #IMEI-866658078758057",
-          "qty": "1piece",
-          "rate": 25322.88,
-          "tax": "18%",
-          "amount": 29099.00
-        },
-        {
-          "name": "VIVO F29 PRO 5G 8GB/256GB G.BLACK #IMEI-866658078758057",
-          "qty": "1piece",
-          "rate": 25322.88,
-          "tax": "18%",
-          "amount": 29099.00
-        },
-        {
-          "name":
-              "Samsung Galaxy S23 Ultra 5G 12GB/512GB G.BLACK #IMEI-866658078758057",
-          "qty": "1piece",
-          "rate": 25322.88,
-          "tax": "18%",
-          "amount": 29099.00
-        }
-      ],
-      "discount": 2300.00,
-      "shipping": 0.00,
-      "total": 27700.00,
-      "paid": 27700.00,
-      "due": 0.00,
-      "payments": [
-        {
-          "txn_no": "PAY-IN-279",
-          "mode": "UPI",
-          "date": "07-05-2025",
-          "amount": 1700.00
-        },
-        {
-          "txn_no": "PAY-IN-278",
-          "mode": "Cash",
-          "date": "07-05-2025",
-          "amount": 26000.00
-        }
-      ]
+  Future<void> _connectToDevice(BluetoothDevice device) async {
+    try {
+      setState(() {
+        _isConnecting = true;
+      });
+
+      final isConnected = await FlutterBluetoothPrinter.connect(
+        device.address,
+      );
+
+      if (isConnected) {
+        setState(() {
+          _connectedDevice = device;
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to connect to ${device.name}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Connection error: ${e.toString()}')),
+      );
+    } finally {
+      setState(() {
+        _isConnecting = false;
+      });
     }
-  ];
+  }
+
+  Future<void> _printReceipt() async {
+    if (_connectedDevice == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please connect to a printer first')),
+      );
+      return;
+    }
+
+    try {
+      setState(() {
+        _isPrinting = true;
+      });
+      controller?.paperSize = PaperSize.mm80;
+
+      // Print the receipt
+      await controller?.print(
+        address: _connectedDevice!.address,
+        keepConnected: true,
+        addFeeds: 4,
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Print job sent to ${_connectedDevice!.name}')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Printing failed: ${e.toString()}')),
+      );
+    } finally {
+      setState(() {
+        _isPrinting = false;
+      });
+    }
+  }
+
+  Future<void> _selectAndPrint() async {
+    final device = await FlutterBluetoothPrinter.selectDevice(context);
+    if (device != null) {
+      await _connectToDevice(device);
+      if (_connectedDevice != null) {
+        await _printReceipt();
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No printer selected')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,38 +109,64 @@ class _BluePrinterDesignBackup2State extends State<BluePrinterDesignBackup2> {
           backgroundColor: Colors.redAccent,
           title: const Text('Bluetooth Printer'),
           centerTitle: true,
+          actions: [
+            if (_connectedDevice != null)
+              IconButton(
+                icon:
+                    const Icon(Icons.bluetooth_connected, color: Colors.white),
+                onPressed: () async {
+                  await FlutterBluetoothPrinter.disconnect(
+                      _connectedDevice!.address);
+                  setState(() {
+                    _connectedDevice = null;
+                  });
+                },
+              ),
+          ],
         ),
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.all(15),
-              backgroundColor: Colors.blue,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_connectedDevice != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    'Connected to: ${_connectedDevice!.name}',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(15),
+                  backgroundColor: Colors.blue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+                onPressed:
+                    _isConnecting || _isPrinting ? null : _selectAndPrint,
+                child: _isConnecting
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : _isPrinting
+                        ? const Text('Printing...',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                            ))
+                        : const Text(
+                            'Select Printer & Print',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
               ),
-            ),
-            onPressed: () async {
-              final address =
-                  await FlutterBluetoothPrinter.selectDevice(context);
-              if (address != null) {
-                await controller?.print(
-                  address: address.address,
-                  keepConnected: true,
-                  addFeeds: 4,
-                );
-              } else {
-                log('Failed Printing!');
-              }
-            },
-            child: Text(
-              'Select Printer & Print',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            ],
           ),
         ),
         body: Receipt(
