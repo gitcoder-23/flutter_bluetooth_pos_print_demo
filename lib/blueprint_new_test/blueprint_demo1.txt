@@ -1,0 +1,135 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:bluetooth_thermal_printer/bluetooth_thermal_printer.dart';
+import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
+
+class BlueprintDemo1 extends StatefulWidget {
+  const BlueprintDemo1({super.key});
+
+  @override
+  State<BlueprintDemo1> createState() => _BlueprintDemo1State();
+}
+
+class _BlueprintDemo1State extends State<BlueprintDemo1> {
+  bool connected = false;
+  List availableBluetoothDevices = [];
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<void> getBluetooth() async {
+    final List? bluetooths = await BluetoothThermalPrinter.getBluetooths;
+    setState(() {
+      availableBluetoothDevices = bluetooths!;
+    });
+  }
+
+  Future<void> setConnect(String mac) async {
+    final String? result = await BluetoothThermalPrinter.connect(mac);
+    if (result == "true") {
+      setState(() {
+        connected = true;
+      });
+    }
+  }
+
+  Future<void> printTicket() async {
+    String? isConnected = await BluetoothThermalPrinter.connectionStatus;
+    if (isConnected == "true") {
+      List<int> bytes = await getTicket();
+      final result = await BluetoothThermalPrinter.writeBytes(bytes);
+      print("Ticket print result: $result");
+    }
+  }
+
+  Future<List<int>> getTicket() async {
+    List<int> bytes = [];
+    final profile = await CapabilityProfile.load();
+    final generator = Generator(PaperSize.mm80, profile);
+
+    bytes += generator.text("DEMO PRINT",
+        styles: PosStyles(
+            align: PosAlign.center,
+            height: PosTextSize.size2,
+            width: PosTextSize.size2),
+        linesAfter: 1);
+
+    bytes += generator.text("Address: XYZ Location",
+        styles: PosStyles(align: PosAlign.center));
+    bytes += generator.text("Phone: 9876543210",
+        styles: PosStyles(align: PosAlign.center));
+    bytes += generator.hr();
+
+    bytes += generator.row([
+      PosColumn(text: 'No', width: 1, styles: PosStyles(bold: true)),
+      PosColumn(text: 'Item', width: 5, styles: PosStyles(bold: true)),
+      PosColumn(
+          text: 'Qty', width: 3, styles: PosStyles(align: PosAlign.center)),
+      PosColumn(
+          text: 'Amt', width: 3, styles: PosStyles(align: PosAlign.right)),
+    ]);
+
+    bytes += generator.row([
+      PosColumn(text: '1', width: 1),
+      PosColumn(text: 'Tea', width: 5),
+      PosColumn(text: '2', width: 3, styles: PosStyles(align: PosAlign.center)),
+      PosColumn(text: '20', width: 3, styles: PosStyles(align: PosAlign.right)),
+    ]);
+
+    bytes += generator.hr();
+    bytes += generator.text("Total: ₹20",
+        styles: PosStyles(align: PosAlign.right, bold: true));
+    bytes += generator.feed(2);
+    bytes += generator.cut();
+
+    return bytes;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Thermal Printer Demo'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            const Text("Search for Paired Bluetooth Devices"),
+            ElevatedButton(
+              onPressed: getBluetooth,
+              child: const Text("Search"),
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: ListView.builder(
+                itemCount: availableBluetoothDevices.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(availableBluetoothDevices[index]),
+                    subtitle: const Text("Tap to connect"),
+                    onTap: () {
+                      String device = availableBluetoothDevices[index];
+                      List parts = device.split("#");
+                      if (parts.length >= 2) {
+                        String mac = parts[1];
+                        setConnect(mac);
+                      }
+                    },
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: connected ? printTicket : null,
+              child: const Text("Print Ticket"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
