@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_printer/flutter_bluetooth_printer.dart';
 import 'dart:developer';
 
-class BluePrintScreenOld extends StatefulWidget {
-  const BluePrintScreenOld({super.key});
+class BluePrintScreenOldBackup extends StatefulWidget {
+  const BluePrintScreenOldBackup({super.key});
 
   @override
-  State<BluePrintScreenOld> createState() => _BluePrintScreenOldState();
+  State<BluePrintScreenOldBackup> createState() =>
+      _BluePrintScreenOldBackupState();
 }
 
-class _BluePrintScreenOldState extends State<BluePrintScreenOld> {
+class _BluePrintScreenOldBackupState extends State<BluePrintScreenOldBackup> {
   ReceiptController? controller;
 
   @override
@@ -93,35 +94,6 @@ class _BluePrintScreenOldState extends State<BluePrintScreenOld> {
           ),
           Divider(),
           SizedBox(height: 5),
-          Row(
-            children: [
-              Expanded(
-                child: Text('2', style: TextStyle(fontSize: 14)),
-              ),
-              Expanded(
-                flex: 3,
-                child: Text('Apple', style: TextStyle(fontSize: 14)),
-              ),
-              Expanded(
-                flex: 2,
-                child: Text(
-                  '118',
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.right,
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Text(
-                  '118',
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.right,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 5),
-
           Row(
             children: [
               Expanded(

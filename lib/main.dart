@@ -6,6 +6,7 @@ import 'blue_printer_design.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 
 import 'blue_printer_design_backup.dart';
+import 'blueprint_screen_old.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,7 +34,8 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: BluePrinterDesignBackup(),
+      home: BluePrintScreenOld(),
+      // home: BluePrinterDesignBackup(),
     );
   }
 }
